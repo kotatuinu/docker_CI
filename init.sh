@@ -23,7 +23,7 @@ app6="apache"
 
 #image download
 images1="mysql"
-images2="sameersbn/redmine"
+images2="redmine"
 images3="sameersbn/gitlab"
 images4="sameersbn/redis"
 images5="jenkins"
@@ -49,7 +49,7 @@ done
 for i in `seq 1 6`
 do
 	eval c="ci_\$app${i}"
-	rslt=`docker ps | grep -e "${c}$"`
+	rslt=`docker ps -a | grep -e "${c}$"`
 	if [ -n "$rslt" ]
 	then
 		docker rm $c
@@ -116,10 +116,10 @@ fi
 docker run --name=ci_mysql -d -v ${mysql_dir}:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${mysqlpwd} mysql:latest
 sleep 30
 
-## redmine
+## for redmine
 docker exec ci_mysql mysql -u root -p${mysqlpwd} -s -e "CREATE USER 'redmine'@'%.%.%.%' IDENTIFIED BY '${redminepwd}'; CREATE DATABASE IF NOT EXISTS redmine_production DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci; GRANT SELECT, LOCK TABLES, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON redmine_production.* TO 'redmine'@'%.%.%.%';"
 
-## gitlab
+## for gitlab
 docker exec ci_mysql mysql -u root -p${mysqlpwd} -s -e "CREATE USER 'gitlab'@'%.%.%.%' IDENTIFIED BY '${gitlabpwd}'; CREATE DATABASE IF NOT EXISTS gitlabhq_production DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci; GRANT ALL PRIVILEGES ON gitlabhq_production.* TO 'gitlab'@'%.%.%.%';"
 
 #(2)redis & gitlab
