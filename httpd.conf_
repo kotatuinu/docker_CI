@@ -546,44 +546,23 @@ Include "/opt/bitnami/apache2/conf/bitnami/bitnami.conf"
 IncludeOptional "/opt/bitnami/apache2/conf/vhosts/*.conf"
 
 
-
-
 ProxyRequests Off
 <Proxy *>
 	Order deny,allow
 	Allow from all
 </Proxy>
 
-#RewriteEngine on
-#RewriteRule ^/jenkins$ /jenkins/ [R]
-#RewriteRule ^/redmine$ /redmine/ [R]
-#RewriteRule ^/gitlab$ /gitlab/ [R]
-
-#ProxyHTMLURLMap http://ci_jenkins:8080/	/jenkins
-#ProxyHTMLURLMap http://ci_redmine/		/redmine
-#ProxyHTMLURLMap http://ci_gitlab/		/gitlab
-
-
-ProxyPassReverseCookieDomain ci_jenkins:8080 192.168.99.100
-ProxyPassReverseCookiePath / /jenkins/
-#ProxyPassReverseCookieDomain ci_redmine 192.168.99.100
-#ProxyPassReverseCookiePath / /redmine/
-#ProxyPassReverseCookieDomain ci_gitlab 192.168.99.100 
-#ProxyPassReverseCookiePath / /gitlab/
-
 <Location /jenkins/>
-	ProxyPass http://ci_jenkins:8080/
-	ProxyPassReverse http://ci_jenkins:8080/
+	ProxyPass http://ci_jenkins:8080/jenkins/
+	ProxyPassReverse http://ci_jenkins:8080/jenkins/
 
 	ProxyHTMLEnable On
 	ProxyHTMLURLMap /jenkins/ /jenkins/
-	ProxyHTMLURLMap http://ci_jenkins:8080/jenkins/ /jenkins/
 
-#    AuthType Basic
-#    AuthName "Only for administrators"
-#    AuthUserFile /usr/local/apache/passwd/passwords
-#    Require user admin
-	RequestHeader    unset  Accept-Encoding
+	ProxyPassReverseCookieDomain ci_jenkins:8080 192.168.99.100
+	ProxyPassReverseCookiePath /jenkins/ /jenkins/
+
+	RequestHeader unset  Accept-Encoding
 </Location>
 
 <Location /redmine/>
@@ -593,7 +572,10 @@ ProxyPassReverseCookiePath / /jenkins/
 	ProxyHTMLEnable On
 	ProxyHTMLURLMap / /redmine/
 
-	RequestHeader    unset  Accept-Encoding
+	ProxyPassReverseCookieDomain ci_redmine 192.168.99.100
+	ProxyPassReverseCookiePath / /redmine/
+
+	RequestHeader unset  Accept-Encoding
 </Location>
 
 <Location /gitlab/>
@@ -603,9 +585,8 @@ ProxyPassReverseCookiePath / /jenkins/
 	ProxyHTMLEnable On
 	ProxyHTMLURLMap / /gitlab/
 
-#    AuthType Basic
-#    AuthName "Only for administrators"
-#    AuthUserFile /usr/local/apache/passwd/passwords
-#    Require user admin
-	RequestHeader    unset  Accept-Encoding
+	ProxyPassReverseCookieDomain ci_gitlab 192.168.99.100 
+	ProxyPassReverseCookiePath / /gitlab/
+
+	RequestHeader unset  Accept-Encoding
 </Location>
