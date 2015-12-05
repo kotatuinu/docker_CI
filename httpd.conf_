@@ -566,14 +566,14 @@ ProxyRequests Off
 </Location>
 
 <Location /redmine/>
-	ProxyPass http://ci_redmine/
-	ProxyPassReverse  http://ci_redmine/
+	ProxyPass http://ci_redmine/redmine/
+	ProxyPassReverse  http://ci_redmine/redmine/
 
 	ProxyHTMLEnable On
-	ProxyHTMLURLMap / /redmine/
+	ProxyHTMLURLMap /redmine/ /redmine/
 
 	ProxyPassReverseCookieDomain ci_redmine 192.168.99.100
-	ProxyPassReverseCookiePath / /redmine/
+	ProxyPassReverseCookiePath /redmine/ /redmine/
 
 	RequestHeader unset  Accept-Encoding
 </Location>

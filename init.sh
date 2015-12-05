@@ -23,7 +23,7 @@ app6="apache"
 
 #image download
 images1="mysql"
-images2="redmine"
+images2="sameersbn/redmine"
 images3="sameersbn/gitlab"
 images4="sameersbn/redis"
 images5="jenkins"
@@ -129,7 +129,7 @@ docker run --name=ci_gitlab -d --link ci_gitlab-redis:redisio --link ci_mysql:my
 sleep 30
 
 #(3)redmine
-docker run --name=ci_redmine -it -d --link ci_mysql:mysql --link ci_gitlab:ci_gitlab -e DB_HOST=ci_mysql -e DB_NAME=redmine_production -e DB_USER=redmine -e DB_PASS=${redminepwd} -e DB_TYPE=mysql -v ${redmine_dir}:/home/redmine/data sameersbn/redmine:latest
+docker run --name=ci_redmine -it -d --link ci_mysql:mysql --link ci_gitlab:ci_gitlab -e DB_HOST=ci_mysql -e DB_NAME=redmine_production -e DB_USER=redmine -e DB_PASS=${redminepwd} -e DB_TYPE=mysql --env='REDMINE_RELATIVE_URL_ROOT=/redmine' -v ${redmine_dir}:/home/redmine/data sameersbn/redmine:latest
 sleep 30
 
 #(4)jenkins

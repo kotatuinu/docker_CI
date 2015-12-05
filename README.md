@@ -103,20 +103,20 @@ __ Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [
  ![JenkinsLogin](pict/jenkins_1.png)  
  ”リバースプロキシの設定がおかしい”との指摘があれども今は放置。  
  ![JenkinsLogin](pict/jenkins_2.png)  
-「セキュリティを有効化」をONにする。他は適当に設定して「保存」を押下。   
+「セキュリティを有効化」をONにする。他は適当に設定して「保存」を押下。  
  ![JenkinsLogin](pict/jenkins_3.png)  
  サインアップを求められるので適当なユーザ・パスワードを設定。  
- ![JenkinsLogin](pict/jenkins_4.png)   
- 次回から作成したユーザでログインする。   
- ![JenkinsLogin](pict/jenkins_5.png)   
+ ![JenkinsLogin](pict/jenkins_4.png)  
+ 次回から作成したユーザでログインする。  
+ ![JenkinsLogin](pict/jenkins_5.png)  
 
 #### gitlab
  userid/password=root/5iveL!feで接続。  
- ![GitlabLogin](pict/gitlab_1.png)   
+ ![GitlabLogin](pict/gitlab_1.png)  
  rootのパスワードの更新を求められる。適切なパスワードを設定する。  
- ![GitlabLogin](pict/gitlab_2.png)   
+ ![GitlabLogin](pict/gitlab_2.png)  
   プロジェクト、グループの登録を行う。  
- ![GitlabLogin](pict/gitlab_3.png)   
+ ![GitlabLogin](pict/gitlab_3.png)  
 
 
 # 覚書
@@ -126,8 +126,8 @@ __ Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [
  mod_proxy、mod_proxy_http：指定されたURLのパスから区別して、バックエンドサーバに振り分ける。ProxyRequests Off とProxyPass、ProxyPassReverseで設定する。Cookieの転送先バックエンドサーバ、パスの設定も行う。ProxyPassReverseCookieDomain、ProxyPassReverseCookiePathで設定する。  
  mod_proxy_html：CSS、pictなどのリンクを書き換える。ProxyHTMLEnable On、ProxyHTMLURLMapで設定する。  
  Locationディレクティブに設定することで、特定のパスだけに設定を利かせることができる。  
- なお、Jenkinsでパスに/jenkins/を追加しているのでProxyHTMLURLMapとProxyPassReverseCookiePathは不要かもしれない。
- Redmineの保存でリダイレクトされない問題は、パスの設定を行えば解決するかもしれない。  
+ なお、Jenkinsでパスに/jenkins/を追加しているのでProxyHTMLURLMapとProxyPassReverseCookiePathは不要かもしれない。 ←正解。削除した。  
+ Redmineの保存でリダイレクトされない問題は、パスの設定を行えば解決するかもしれない。←正解、RedmineのDockerコンテナにパス設定することで解決した。  
 
  ```
   LoadFile    /opt/bitnami/common/lib/libxml2.so
@@ -144,23 +144,23 @@ __ Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [
   	ProxyPassReverse http://ci_jenkins:8080/jenkins/
 
   	ProxyHTMLEnable On
-  	ProxyHTMLURLMap /jenkins/ /jenkins/
+  #	ProxyHTMLURLMap /jenkins/ /jenkins/
 
   	ProxyPassReverseCookieDomain ci_jenkins:8080 192.168.99.100
-  	ProxyPassReverseCookiePath /jenkins/ /jenkins/
+  #	ProxyPassReverseCookiePath /jenkins/ /jenkins/
 
   	RequestHeader unset  Accept-Encoding
   </Location>
 
   <Location /redmine/>
-  	ProxyPass http://ci_redmine/
-  	ProxyPassReverse  http://ci_redmine/
+  	ProxyPass http://ci_redmine/redmine/
+  	ProxyPassReverse  http://ci_redmine/redmine/
 
   	ProxyHTMLEnable On
-  	ProxyHTMLURLMap / /redmine/
+  #	ProxyHTMLURLMap / /redmine/
 
   	ProxyPassReverseCookieDomain ci_redmine 192.168.99.100
-  	ProxyPassReverseCookiePath / /redmine/
+  #	ProxyPassReverseCookiePath / /redmine/
 
   	RequestHeader unset  Accept-Encoding
   </Location>
@@ -209,3 +209,4 @@ netsh interface set interface "VirtualBox Host-Only Network #2" enable
 # 既知の問題
 ### ・redmine
 - 個人設定の保存でリダイレクト先に問題あり。/redmine/が付かない。
+ → redmineのDockerコンテナに、--env='REDMINE_RELATIVE_URL_ROOT=/redmine'を設定することで、URLに/redmineが付く。これで、恋人設定の保存もOK。（httpd.confの設定も合わせて修正）
