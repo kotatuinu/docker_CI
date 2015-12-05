@@ -25,10 +25,10 @@ FMV LIFEBOOK WA3/J（FMVWJA3BA7）
 - DDR3 SDRAM PC3-12800 8.00GB
 
 ###提供ファイル
-* __init.sh__ : Dockerイメージのダウンロード、Apache HTTP Serverからログインできるまでの環境設定、Dockerコンテナの起動を行う。
-* __start.sh__ : init.shで作成したDockerコンテナを起動する。（docker startを実行）
-* __stop.sh__ : init.shで作成したDockerコンテナが起動している場合、停止する。（docker stopを実行）
-* __httpd.conf_ __ : init.shでApache HTTP Serverに設定するコンフィグファイル（コピーするだけ）
+* **init.sh** : Dockerイメージのダウンロード、Apache HTTP Serverからログインできるまでの環境設定、Dockerコンテナの起動を行う。
+* **start.sh** : init.shで作成したDockerコンテナを起動する。（docker startを実行）
+* **stop.sh** : init.shで作成したDockerコンテナが起動している場合、停止する。（docker stopを実行）
+* **httpd.conf_** : init.shでApache HTTP Serverに設定するコンフィグファイル（コピーするだけ）
 
 ## 使い方
 
@@ -103,21 +103,20 @@ __ Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [
  ![JenkinsLogin](pict/jenkins_1.png)  
  ”リバースプロキシの設定がおかしい”との指摘があれども今は放置。  
  ![JenkinsLogin](pict/jenkins_2.png)  
-「セキュリティを有効化」をONにする。他は適当に設定して「保存」を押下。  
+「セキュリティを有効化」をONにする。他は適当に設定して「保存」を押下。   
  ![JenkinsLogin](pict/jenkins_3.png)  
  サインアップを求められるので適当なユーザ・パスワードを設定。  
- ![JenkinsLogin](pict/jenkins_4.png)  
- 次回から作成したユーザでログインする。  
- ![JenkinsLogin](pict/jenkins_5.png)  
+ ![JenkinsLogin](pict/jenkins_4.png)   
+ 次回から作成したユーザでログインする。   
+ ![JenkinsLogin](pict/jenkins_5.png)   
 
 #### gitlab
- userid/password=root/5iveL!feで接続。
- ![GitlabLogin](pict/gitlab_1.png)  
- rootのパスワードの更新を求められる。適切なパスワードを設定する。
- ![GitlabLogin](pict/gitlab_2.png)  
+ userid/password=root/5iveL!feで接続。  
+ ![GitlabLogin](pict/gitlab_1.png)   
+ rootのパスワードの更新を求められる。適切なパスワードを設定する。  
+ ![GitlabLogin](pict/gitlab_2.png)   
   プロジェクト、グループの登録を行う。  
- ![GitlabLogin](pict/gitlab_3.png)  
-
+ ![GitlabLogin](pict/gitlab_3.png)   
 
 
 # 覚書
