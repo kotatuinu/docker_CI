@@ -60,6 +60,7 @@ done
 #すでにディレクトリがある場合は削除する
 if [ -d ${pdir}/ci/ ] 
 then
+	chmod -R +w ${pdir}/ci/
 	rm -rf ${pdir}/ci/
 fi
 
