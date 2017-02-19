@@ -14,8 +14,8 @@
 # of the server's control files begin with "/" (or "drive:/" for Win32), the
 # server will use that explicit path.  If the filenames do *not* begin
 # with "/", the value of ServerRoot is prepended -- so "logs/access_log"
-# with ServerRoot set to "/usr/local/apache2" will be interpreted by the
-# server as "/usr/local/apache2/logs/access_log", whereas "/logs/access_log" 
+# with ServerRoot set to "/usr/local/apache" will be interpreted by the
+# server as "/usr/local/apache/logs/access_log", whereas "/logs/access_log" 
 # will be interpreted as '/logs/access_log'.
 
 #
@@ -28,7 +28,7 @@
 # same ServerRoot for multiple httpd daemons, you will need to change at
 # least PidFile.
 #
-ServerRoot "/opt/bitnami/apache2"
+ServerRoot "/opt/bitnami/apache"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -152,7 +152,8 @@ LoadModule alias_module modules/mod_alias.so
 LoadModule rewrite_module modules/mod_rewrite.so
 
 
-LoadFile    /opt/bitnami/common/lib/libxml2.so
+# LoadFile    /opt/bitnami/common/lib/libxml2.so
+LoadFile    /usr/lib/x86_64-linux-gnu/libxml2.so
 LoadModule  proxy_html_module    modules/mod_proxy_html.so
 LoadModule  xml2enc_module       modules/mod_xml2enc.so
 
@@ -221,8 +222,8 @@ ServerName localhost:80
 # documents. By default, all requests are taken from this directory, but
 # symbolic links and aliases may be used to point to other locations.
 #
-DocumentRoot "/opt/bitnami/apache2/htdocs"
-<Directory "/opt/bitnami/apache2/htdocs">
+DocumentRoot "/opt/bitnami/apache/htdocs"
+<Directory "/opt/bitnami/apache/htdocs">
     #
     # Possible values for the Options directive are "None", "All",
     # or any combination of:
@@ -338,7 +339,7 @@ LogLevel warn
     # client.  The same rules about trailing "/" apply to ScriptAlias
     # directives as to Alias.
     #
-    ScriptAlias /cgi-bin/ "/opt/bitnami/apache2/cgi-bin/"
+    ScriptAlias /cgi-bin/ "/opt/bitnami/apache/cgi-bin/"
 
 </IfModule>
 
@@ -351,10 +352,10 @@ LogLevel warn
 </IfModule>
 
 #
-# "/opt/bitnami/apache2/cgi-bin" should be changed to whatever your ScriptAliased
+# "/opt/bitnami/apache/cgi-bin" should be changed to whatever your ScriptAliased
 # CGI directory exists, if you have that configured.
 #
-<Directory "/opt/bitnami/apache2/cgi-bin">
+<Directory "/opt/bitnami/apache/cgi-bin">
     AllowOverride None
     Options None
     Require all granted
@@ -541,9 +542,9 @@ ServerSignature Off
 ServerTokens Prod
 TraceEnable Off
 
-Include "/opt/bitnami/apache2/conf/ssi.conf"
-Include "/opt/bitnami/apache2/conf/bitnami/bitnami.conf"
-IncludeOptional "/opt/bitnami/apache2/conf/vhosts/*.conf"
+Include "/opt/bitnami/apache/conf/ssi.conf"
+Include "/opt/bitnami/apache/conf/bitnami/bitnami.conf"
+IncludeOptional "/opt/bitnami/apache/conf/vhosts/*.conf"
 
 
 ProxyRequests Off
