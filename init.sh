@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if [ $# -ne 4 ]
+if [ $# -ne 6 ]
 then
-	echo "Usage: Argment [mysql password] [redmine DB password] [gitlab DB password] [gitlab security db keybase]"
+	echo "Usage: Argment [mysql password] [redmine DB password] [gitlab DB password] [gitlab security db keybase] [gitlab secret key base] [gitlab otp key base]"
 	exit 1
 fi
 #コマンド実行パス（このパスをもとにディレクトリ作成、Apache httpd.confの設定）
@@ -11,7 +11,9 @@ pdir=$(cd $(dirname $0); pwd)
 mysqlpwd=$1
 redminepwd=$2
 gitlabpwd=$3
-gitlab_seckey=$4
+gitlab_dbkey=$4
+gitlab_secretkey=$5
+gitlab_otpkey=$6
 
 #applications name
 app1="mysql"
@@ -102,8 +104,9 @@ a=`docker ps | grep ${images6} | awk '{print $1}'`
 docker exec -it ${a} apt-get -y update
 docker exec -it ${a} sudo apt-get -y install libapache2-mod-proxy-html
 docker exec -it ${a} apt-get -y install libxml2-dev
-docker exec ${a} ln -s /usr/lib/apache2/modules/mod_proxy_html.so /opt/bitnami/apache2/modules/
-docker exec ${a} ln -s /usr/lib/apache2/modules/mod_xml2enc.so /opt/bitnami/apache2/modules/
+docker exec ${a} ln -s /usr/lib/apache2/modules/mod_proxy_html.so /opt/bitnami/apache/modules/
+docker exec ${a} ln -s /usr/lib/apache2/modules/mod_xml2enc.so /opt/bitnami/apache/modules/
+
 docker commit ${a} apache_rp
 docker stop ${a}
 docker rm ${a}
@@ -126,7 +129,7 @@ docker exec ci_mysql mysql -u root -p${mysqlpwd} -s -e "CREATE USER 'gitlab'@'%.
 #(2)redis & gitlab
 docker run --name=ci_gitlab-redis -d -v ${redis_dir}:/var/lib/redis sameersbn/redis:latest
 sleep 30
-docker run --name=ci_gitlab -d --link ci_gitlab-redis:redisio --link ci_mysql:mysql -e DB_HOST=mysql -e DB_TYPE=mysql -e DB_NAME=gitlabhq_production -e DB_USER=gitlab -e DB_PASS=${gitlabpwd} -e GITLAB_SECRETS_DB_KEY_BASE=${gitlab_seckey} -v ${gitlab_dir}:/home/git/data sameersbn/gitlab:latest
+docker run --name=ci_gitlab -d --link ci_gitlab-redis:redisio --link ci_mysql:mysql -e DB_HOST=mysql -e DB_TYPE=mysql -e DB_NAME=gitlabhq_production -e DB_USER=gitlab -e DB_PASS=${gitlabpwd} -e GITLAB_SECRETS_DB_KEY_BASE=${gitlab_dbkey} -e GITLAB_SECRETS_SECRET_KEY_BASE=${gitlab_secretkey} -e GITLAB_SECRETS_OTP_KEY_BASE=${gitlab_otpkey} -v ${gitlab_dir}:/home/git/data sameersbn/gitlab:latest
 sleep 30
 
 #(3)redmine
