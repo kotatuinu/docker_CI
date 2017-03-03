@@ -51,10 +51,10 @@ docker-machineのコンソールが開きDockerを操作ができる。しかし
  （なお、Docker VMイメージはboot2docker.isoというCDイメージなので、マウントしたディレクトリ以外にファイル・ディレクトリを作成してもVMを止めると消えてしまう。そして、マウントの設定もCDイメージに書かれているので、デフォルトのマウント以外は追加できない＝/c/Users/だけしかマウントされない）  
 
  確認した環境では、c:\Users\<ユーザ>\Documents\docker の配下にinit.shを置いて実行した。  
- init.shの引数で、MySQLのパスワード、RedmineとgitlabのDBパスワード、gitlabのSecure DB Key(64文字)を指定する。
-__ Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [gitlab security db keybase]__  
+ init.shの引数で、MySQLのパスワード、RedmineとgitlabのDBパスワード、gitlabのSecure DB Key・secret key・gitlab otp keyを指定する。
+__Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [gitlab security db keybase] [gitlab secret key base] [gitlab otp key base]__  
 
- 例：`docker@default:~$ /c/Users/<ユーザ>/Documents/docker/init.sh USLXBvbg QjNlvCVI 8V3wPLOi D1TKG2WsPE4mT6JWZEqUaoOhDOLVtflodLjAWZTy7rczIkfGnT7TI8YPSrpNKfCF`
+ 例：`docker@default:~$ /c/Users/<ユーザ>/Documents/docker/init.sh USLXBvbg QjNlvCVI 8V3wPLOi D1TKG2WsPE4mT6JWZEqUaoOhDOLVtflodLjAWZTy7rczIkfGnT7TI8YPSrpNKfCF 8bA8uGRyDm9m0MC0KnTvIcdXh9UavCdNP5qhhYT83neuRSE60XATJYmqCntXvph2 7e0KTiuy18wiQcfUxMExRJQ8ifINmSsJZ0GuYDJZ6dGJ6j8pAhripaA5QXgTaxhO`
 
  init.shが作成するディレクトリ（/c/Users/<ユーザ>/Documents/docker/init.shを実行）  
 
