@@ -58,7 +58,6 @@ do
 	fi
 done
 
-
 #すでにディレクトリがある場合は削除する
 if [ -d ${pdir}/ci/ ] 
 then
@@ -79,46 +78,28 @@ eval redis_dir="${pdir}/ci/\${app4}"
 eval jenkins_dir="${pdir}/ci/\${app5}"
 eval apache_dir="${pdir}/ci/\${app6}"
 
-#image download
+#image remove & download
 for i in `seq 1 6`
 do
 	eval img="\$images$i"
 	rslt=`docker images | grep $img`
 	if [ -z "$rslt" ]
 	then
+		docker rmi ${img}
 		docker pull ${img}:latest
 	fi
 done
 
-
-#(0)apache を ReverseProxyにするためmod_proxy_htmlを追加する→apache_rp というイメージ名にする。
-#apache_rpがある場合は削除してから作る
-rslt=`docker images | grep apache_rp`
-if [ -n "$rslt" ]
-then
-	docker rmi apache_rp
-fi
-docker run -d --rm=false -v ${apache_dir}/app:/app -v ${apache_dir}/conf:/bitnami/apache/conf -v ${apache_dir}/logs:/bitnami/apache/logs -p 80:80 -p 443:443 ${images6} 
-
-a=`docker ps | grep ${images6} | awk '{print $1}'`
-docker exec -it ${a} apt-get -y update
-docker exec -it ${a} sudo apt-get -y install libapache2-mod-proxy-html
-docker exec -it ${a} apt-get -y install libxml2-dev
-docker exec ${a} ln -s /usr/lib/apache2/modules/mod_proxy_html.so /opt/bitnami/apache/modules/
-docker exec ${a} ln -s /usr/lib/apache2/modules/mod_xml2enc.so /opt/bitnami/apache/modules/
-
-docker commit ${a} apache_rp
-docker stop ${a}
-docker rm ${a}
-
-if [ -f ${pdir}/httpd.conf_ ]
-then
-	cp ${pdir}/httpd.conf_ ${apache_dir}/conf/httpd.conf
-fi
-
 #(1)mysql
 docker run --name=ci_mysql -d -v ${mysql_dir}:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${mysqlpwd} mysql:latest
-sleep 30
+while true
+do
+	a=$(docker logs ci_mysql 2>&1 | grep "mysqld: ready for connections" | wc -l)
+	if [ "$a" -ge 2 ]; then
+		break
+	fi
+	sleep 10
+done
 
 ## for redmine
 docker exec ci_mysql mysql -u root -p${mysqlpwd} -s -e "CREATE USER 'redmine'@'%.%.%.%' IDENTIFIED BY '${redminepwd}'; CREATE DATABASE IF NOT EXISTS redmine_production DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci; GRANT SELECT, LOCK TABLES, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON redmine_production.* TO 'redmine'@'%.%.%.%';"
@@ -129,7 +110,7 @@ docker exec ci_mysql mysql -u root -p${mysqlpwd} -s -e "CREATE USER 'gitlab'@'%.
 #(2)redis & gitlab
 docker run --name=ci_gitlab-redis -d -v ${redis_dir}:/var/lib/redis sameersbn/redis:latest
 sleep 30
-docker run --name=ci_gitlab -d --link ci_gitlab-redis:redisio --link ci_mysql:mysql -e DB_HOST=mysql -e DB_TYPE=mysql -e DB_NAME=gitlabhq_production -e DB_USER=gitlab -e DB_PASS=${gitlabpwd} -e GITLAB_SECRETS_DB_KEY_BASE=${gitlab_dbkey} -e GITLAB_SECRETS_SECRET_KEY_BASE=${gitlab_secretkey} -e GITLAB_SECRETS_OTP_KEY_BASE=${gitlab_otpkey} -v ${gitlab_dir}:/home/git/data sameersbn/gitlab:latest
+docker run --name=ci_gitlab -d --link ci_gitlab-redis:redisio --link ci_mysql:mysql -e DB_HOST=mysql -e DB_TYPE=mysql -e DB_NAME=gitlabhq_production -e DB_USER=gitlab -e DB_PASS=${gitlabpwd} -e GITLAB_SECRETS_DB_KEY_BASE=${gitlab_dbkey} -e GITLAB_SECRETS_SECRET_KEY_BASE=${gitlab_secretkey} -e GITLAB_SECRETS_OTP_KEY_BASE=${gitlab_otpkey} -e 'GITLAB_RELATIVE_URL_ROOT=/gitlab/' -v ${gitlab_dir}:/home/git/data sameersbn/gitlab:latest
 sleep 30
 
 #(3)redmine
@@ -141,5 +122,21 @@ docker run --name=ci_jenkins --link=ci_gitlab:ci_gitlab --link=ci_redmine:ci_red
 sleep 30
 
 #(5)apache
-docker run --name=ci_apache --link=ci_redmine:ci_redmine --link=ci_jenkins:ci_jenkins --link=ci_gitlab:ci_gitlab -v ${apache_dir}/app:/app -v ${apache_dir}/conf:/bitnami/apache/conf -v ${apache_dir}/logs:/bitnami/apache/logs -p 80:80 -p 443:443 apache_rp &
+docker run --name=ci_apache --link=ci_redmine:ci_redmine --link=ci_jenkins:ci_jenkins --link=ci_gitlab:ci_gitlab -v ${apache_dir}/app:/app -v ${apache_dir}/conf:/bitnami/apache/conf -v ${apache_dir}/logs:/bitnami/apache/logs -p 80:80 -p 443:443 bitnami/apache &
+while true
+do
+	a=$(docker logs ci_apache 2>&1 | grep "Starting apache")
+	if [ -n "$a" ]; then
+		break
+	fi
+	sleep 10
+done
+docker stop ci_apache
+
+if [ -f ${pdir}/httpd.conf_ ]
+then
+	mkdir -p ${apache_dir}/conf/
+	cp ${pdir}/httpd.conf_ ${apache_dir}/conf/httpd.conf
+fi
+docker start ci_apache
 
