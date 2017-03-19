@@ -58,11 +58,14 @@ do
 	fi
 done
 
-#すでにディレクトリがある場合は削除する
+#すでにディレクトリがある場合は削除する。ファイル数が多くて1回では削除できないので消えるまで繰り返す。
 if [ -d ${pdir}/ci/ ] 
 then
 	chmod -R +w ${pdir}/ci/
-	rm -rf ${pdir}/ci/
+	while [ -d ${pdir}/ci/ ]
+	do
+		rm -rf ${pdir}/ci/ > /dev/null 2>&1
+	done
 fi
 
 #永続的データ格納先ディレクトリの作成
