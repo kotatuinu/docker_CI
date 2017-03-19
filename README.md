@@ -1,4 +1,4 @@
-#これはなに？
+# これはなに？
 CIに必要と思われるWebアプリをDockerで立ち上げる環境をつくるシェルスクリプトです。  
 Dockerホストからシェルを実行することで、Dockerイメージのダウンロード、Apache HTTP Serverからログインできるまでの環境設定、Dockerコンテナの起動までをシェルで行います。  
 以下のWebアプリを使用します。  
@@ -10,7 +10,7 @@ Dockerホストからシェルを実行することで、Dockerイメージの�
 
 ![構成図](pict/DcokerCI環境_配置図.png)  
 
-###使用するDockerイメージ
+### 使用するDockerイメージ
 - mysql（公式）  
 - Jenkins（公式）  
 - sameersbn/redmine  
@@ -18,13 +18,13 @@ Dockerホストからシェルを実行することで、Dockerイメージの�
 - sameersbn/redis  
 - bitnami/apache  
 
-###確認環境
+### 確認環境
 FMV LIFEBOOK WA3/J（FMVWJA3BA7）
 - OS:Windows 8.1 64ビットオペレーティングシステム, X64ベースプロセッサ  
 - CPU:Interl(R) Core(TM) i7-3632QM CPU @ 2.20GHz 4コア/8スレッド
 - DDR3 SDRAM PC3-12800 8.00GB
 
-###提供ファイル
+### 提供ファイル
 * **init.sh** : Dockerイメージのダウンロード、Apache HTTP Serverからログインできるまでの環境設定、Dockerコンテナの起動を行う。
 * **start.sh** : init.shで作成したDockerコンテナを起動する。（docker startを実行）
 * **stop.sh** : init.shで作成したDockerコンテナが起動している場合、停止する。（docker stopを実行）
@@ -33,16 +33,12 @@ FMV LIFEBOOK WA3/J（FMVWJA3BA7）
 ## 使い方
 
 1. Docker Toolboxを[Install Docker Machine](http://docs.docker.com/machine/install-machine/)からダウンロードして、インストールする。  
-
 1. Docker Quickstart Terminalを実行して、VMイメージ（default）を作成する。  
 docker-machineのコンソールが開きDockerを操作ができる。しかし、このコンソールは使いにくいので、TeraTermを使ってSSHで接続して操作してしまいましょう。  
-
   これを  
  ![TeraTermLogin](pict/teraterm1_1.png)  
-
   こうして（user/password=docker/tcuser）  
  ![TeraTermLogin](pict/teraterm1_2.png)  
-
   こうじゃ  
  ![TeraTermLogin](pict/teraterm2.png)  
 
@@ -54,10 +50,8 @@ docker-machineのコンソールが開きDockerを操作ができる。しかし
  init.shの引数で、MySQLのパスワード、RedmineとgitlabのDBパスワード、gitlabのSecure DB Key・secret key・gitlab otp keyを指定する。
 __Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [gitlab security db keybase] [gitlab secret key base] [gitlab otp key base]__  
 
- 例：`docker@default:~$ /c/Users/<ユーザ>/Documents/docker/init.sh USLXBvbg QjNlvCVI 8V3wPLOi D1TKG2WsPE4mT6JWZEqUaoOhDOLVtflodLjAWZTy7rczIkfGnT7TI8YPSrpNKfCF 8bA8uGRyDm9m0MC0KnTvIcdXh9UavCdNP5qhhYT83neuRSE60XATJYmqCntXvph2 7e0KTiuy18wiQcfUxMExRJQ8ifINmSsJZ0GuYDJZ6dGJ6j8pAhripaA5QXgTaxhO`
-
+ 例：`docker@default:~$ /c/Users/<ユーザ>/Documents/docker/init.sh USLXBvbg QjNlvCVI 8V3wPLOi D1TKG2WsPE4mT6JWZEqUaoOhDOLVtflodLjAWZTy7rczIkfGnT7TI8YPSrpNKfCF 8bA8uGRyDm9m0MC0KnTvIcdXh9UavCdNP5qhhYT83neuRSE60XATJYmqCntXvph2 7e0KTiuy18wiQcfUxMExRJQ8ifINmSsJZ0GuYDJZ6dGJ6j8pAhripaA5QXgTaxhO`  
  init.shが作成するディレクトリ（/c/Users/<ユーザ>/Documents/docker/init.shを実行）  
-
  ```
 /c/Users/<ユーザ>/Documents/docker/  
   └─ci  
@@ -73,11 +67,11 @@ __Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [g
   上手くいかない場合は、start.shで止まったDockerコンテナを起動しなおす。  
 
   各APのURLは以下。
- * gitlab ：http://192.168.99.100/gitlab/  
- * Redmine ：http://192.168.99.100/redmine/  
- * Jenkins ：http://192.168.99.100/jenkins/  
+  * gitlab ：http://192.168.99.100/gitlab/  
+  * Redmine ：http://192.168.99.100/redmine/  
+  * Jenkins ：http://192.168.99.100/jenkins/  
 
-1. Dockerホスト以外のPCからのアクセス  
+4. Dockerホスト以外のPCからのアクセス  
  Oracle VM VirtualBox マネージャーで、VMを選択して設定ボタンを押す。  
  ![TeraTermLogin](pict/OracleVMVirtualBox.png)  
  ネットワーク → アダプター1を選択して、▷高度を押下 → ポートフォワーディングボタンを押下。  
@@ -86,97 +80,77 @@ __Usage : init.sh [mysql password] [redmine DB password] [gitlab DB password] [g
  ※：Dockerが動いているPCの外からアクセスできるようにする設定。なので余計な設定はしないほうが良い。  
  （sshはデフォルトで設定されている。そのPCしか接続しないなら削除したほうが吉）  
  ![TeraTermLogin](pict/VM_Setting_Network2.png)  
-
   以上の設定で、他のPCからWebブラウザで接続できるようになる。（自PCからも外部IPを指定して接続できる）  
   以下の写真は、手前のPCで背後のPCで動作しているDockerにアクセスしている。左からJenkins,gitlab,Redmineを表示。  
  ![docker_ci](pict/docker_ci.JPG)  
-
 #### redmine
- 上部の「ログイン」を選択肢、userid/password=admin/adminで接続。  
+ 上部の「ログイン」を選択し、userid/password=admin/adminで接続。  
  ![RedmineLogin](pict/redmine_1.png)  
  ![RedmineLogin](pict/redmine_2.png)  
- adminでログインされました。  
+ ![RedmineLogin](pict/redmine_2_2.png)  
+ ![RedmineLogin](pict/redmine_2_3.png)  
+adminでログインされました。  
  ![RedmineLogin](pict/redmine_3.png)  
-
 #### Jenkins  
- まず初めにJenkinsの管理→「セキュリティを設定」を選択して、セキュリティを有効にする。  
- ![JenkinsLogin](pict/jenkins_1.png)  
- ”リバースプロキシの設定がおかしい”との指摘があれども今は放置。  
+ Jenkinsに接続するとUNLOCKとなるので、書かれているパスの内容を以下のコマンドで取得して、入力する。  
+```
+docker@default:~$ docker exec -it ci_jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+581fdd30f8504e69b8908a20a4be3cbb
+ ```  
+ ![JenkinsLogin](pict/jenkins_1_1.png)  
+  プラグインの選択。ここでは「Install suggested plugins」を選択。  
+ ![JenkinsLogin](pict/jenkins_1_2.png)  
+ プラグインのインストールが進行する。
+ ![JenkinsLogin](pict/jenkins_1_3.png)  
+ プラグインのインストールが終わったら、Adminの設定を行う。
+ ![JenkinsLogin](pict/jenkins_1_4.png)  
+ Adminの設定が終わったら、以下の画面になる。
+ ![JenkinsLogin](pict/jenkins_1_5.png)  
+ 「Start using Jenkins」を押すと、Jenkinsを使えるようになる。
  ![JenkinsLogin](pict/jenkins_2.png)  
-「セキュリティを有効化」をONにする。他は適当に設定して「保存」を押下。  
- ![JenkinsLogin](pict/jenkins_3.png)  
- サインアップを求められるので適当なユーザ・パスワードを設定。  
- ![JenkinsLogin](pict/jenkins_4.png)  
- 次回から作成したユーザでログインする。  
- ![JenkinsLogin](pict/jenkins_5.png)  
-
 #### gitlab
- userid/password=root/5iveL!feで接続。  
+ 初回の接続ではパスワードの変更を要求される。適切なパスワードを入力して「Change your password」を押下。
  ![GitlabLogin](pict/gitlab_1.png)  
- rootのパスワードの更新を求められる。適切なパスワードを設定する。  
+ rootで接続する。パスワードはさっき変更したものを入力。
+ ![GitlabLogin](pict/gitlab_1_2.png)  
+ GitLabに接続できました。
  ![GitlabLogin](pict/gitlab_2.png)  
-  プロジェクト、グループの登録を行う。  
- ![GitlabLogin](pict/gitlab_3.png)  
-
 
 # 覚書
 - Docker Toolbox の Docker Quickstart Terminalで作られるVMイメージは、IPアドレスが192.168.99.100で固定。  
  SSH（UserID/Password=docker/tcuser）で接続できる。
 - Apache HTTP Server リバースプロキシとして使用している。
  mod_proxy、mod_proxy_http：指定されたURLのパスから区別して、バックエンドサーバに振り分ける。ProxyRequests Off とProxyPass、ProxyPassReverseで設定する。Cookieの転送先バックエンドサーバ、パスの設定も行う。ProxyPassReverseCookieDomain、ProxyPassReverseCookiePathで設定する。  
- mod_proxy_html：CSS、pictなどのリンクを書き換える。ProxyHTMLEnable On、ProxyHTMLURLMapで設定する。  
+~~mod_proxy_html：CSS、pictなどのリンクを書き換える。ProxyHTMLEnable On、ProxyHTMLURLMapで設定する。  
  Locationディレクティブに設定することで、特定のパスだけに設定を利かせることができる。  
  なお、Jenkinsでパスに/jenkins/を追加しているのでProxyHTMLURLMapとProxyPassReverseCookiePathは不要かもしれない。 ←正解。削除した。  
- Redmineの保存でリダイレクトされない問題は、パスの設定を行えば解決するかもしれない。←正解、RedmineのDockerコンテナにパス設定することで解決した。  
+ Redmineの保存でリダイレクトされない問題は、パスの設定を行えば解決するかもしれない。←正解、RedmineのDockerコンテナにパス設定することで解決した。~~ ←初版ではgitlabで設定できなかったので追加したが、パスを指定できるので不要となった。
 
- ```
-  LoadFile    /opt/bitnami/common/lib/libxml2.so
-  LoadModule  proxy_html_module    modules/mod_proxy_html.so
-  LoadModule  xml2enc_module       modules/mod_xml2enc.so
-  ProxyRequests Off
-  <Proxy *>
-  	Order deny,allow
-  	Allow from all
-  </Proxy>
+```
+<IfModule mod_headers.c>
+#   RequestHeader unset Proxy
+</IfModule>
 
-  <Location /jenkins/>
-  	ProxyPass http://ci_jenkins:8080/jenkins/
-  	ProxyPassReverse http://ci_jenkins:8080/jenkins/
+ProxyRequests Off
+<Proxy *>
+	Order deny,allow
+	Allow from all
+</Proxy>
 
-  	ProxyHTMLEnable On
-  #	ProxyHTMLURLMap /jenkins/ /jenkins/
+<Location /jenkins/>
+	ProxyPass http://ci_jenkins:8080/jenkins/
+	ProxyPassReverse http://ci_jenkins:8080/jenkins/
+</Location>
 
-  	ProxyPassReverseCookieDomain ci_jenkins:8080 192.168.99.100
-  #	ProxyPassReverseCookiePath /jenkins/ /jenkins/
+<Location /redmine/>
+	ProxyPass http://ci_redmine/redmine/
+	ProxyPassReverse http://ci_redmine/redmine/
+</Location>
 
-  	RequestHeader unset  Accept-Encoding
-  </Location>
-
-  <Location /redmine/>
-  	ProxyPass http://ci_redmine/redmine/
-  	ProxyPassReverse  http://ci_redmine/redmine/
-
-  	ProxyHTMLEnable On
-  #	ProxyHTMLURLMap / /redmine/
-
-  	ProxyPassReverseCookieDomain ci_redmine 192.168.99.100
-  #	ProxyPassReverseCookiePath / /redmine/
-
-  	RequestHeader unset  Accept-Encoding
-  </Location>
-
-  <Location /gitlab/>
-  	ProxyPass http://ci_gitlab/
-  	ProxyPassReverse  /
-
-  	ProxyHTMLEnable On
-  	ProxyHTMLURLMap / /gitlab/
-
-  	ProxyPassReverseCookieDomain ci_gitlab 192.168.99.100
-  	ProxyPassReverseCookiePath / /gitlab/
-
-  	RequestHeader unset  Accept-Encoding
-  </Location>
+<Location /gitlab/>
+	ProxyPass http://ci_gitlab/gitlab/
+	ProxyPassReverse http://ci_gitlab/gitlab/
+</Location>
 ```
 - Oracle VM VirtualBoxを起動したままPC（Windows）を休止状態にすると、ネットワークの接続が不可能になる。  
  ipconfigコマンドで「イーサネット アダプター VirtualBox Host-Only Network #2:」を見ると以下のようになっている。  
@@ -209,4 +183,4 @@ netsh interface set interface "VirtualBox Host-Only Network #2" enable
 # 既知の問題
 ### ・redmine
 - 個人設定の保存でリダイレクト先に問題あり。/redmine/が付かない。
- → redmineのDockerコンテナに、--env='REDMINE_RELATIVE_URL_ROOT=/redmine'を設定することで、URLに/redmineが付く。これで、恋人設定の保存もOK。（httpd.confの設定も合わせて修正）
+ → redmineのDockerコンテナに、--env='REDMINE_RELATIVE_URL_ROOT=/redmine'を設定することで、URLに/redmineが付く。これで、設定の保存もOK。（httpd.confの設定も合わせて修正）
